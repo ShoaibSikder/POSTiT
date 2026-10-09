@@ -19,6 +19,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
+admin.site.site_header = "POSTiT Administration"
+admin.site.site_title = "POSTiT Admin"
+admin.site.index_title = "Platform management"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/auth/', include('accounts.urls')),

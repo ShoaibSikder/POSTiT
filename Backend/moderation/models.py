@@ -21,9 +21,8 @@ class SystemSetting(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
-        if self.value < 1:
+        if self.value is not None and self.value < 1:
             raise ValidationError({"value": "The value must be a positive integer."})
 
     def __str__(self):
         return self.get_key_display()
-
