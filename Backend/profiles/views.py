@@ -3,8 +3,6 @@ from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from accounts.models import User
-
 from .models import ProfileMedia
 from .permissions import IsProfileOwnerOrReadOnly
 from .serializers import ProfileMediaCreateSerializer, ProfileMediaSerializer, ProfileSerializer

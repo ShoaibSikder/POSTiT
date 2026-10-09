@@ -1,7 +1,6 @@
 import warnings
 from pathlib import Path
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from PIL import Image, UnidentifiedImageError
 

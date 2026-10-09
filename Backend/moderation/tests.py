@@ -32,6 +32,18 @@ class ModerationAPITests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_admin_role_without_staff_permission_cannot_access_admin_apis(self):
+        non_staff_admin = User.objects.create_user(
+            username="nonstaffadmin",
+            email="nonstaffadmin@example.com",
+            password="unique-test-password-123",
+            role=User.Role.ADMIN,
+        )
+        self.client.force_authenticate(non_staff_admin)
+        response = self.client.get("/api/v1/admin/dashboard/")
+
+        self.assertEqual(response.status_code, 403)
+
     def test_dashboard_and_moderation_actions_are_audited(self):
         self.client.force_authenticate(self.admin)
         dashboard = self.client.get("/api/v1/admin/dashboard/")

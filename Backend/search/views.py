@@ -65,8 +65,3 @@ class PostSearchView(generics.ListAPIView):
             queryset.prefetch_related("images").order_by("-created_at", "-pk"),
             self.request.user,
         )
-
-    def get(self, request, *args, **kwargs):
-        serializer = PostSearchSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        return super().get(request, *args, **kwargs)

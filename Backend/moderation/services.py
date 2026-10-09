@@ -158,8 +158,6 @@ def remove_profile_image(request, profile, *, image_field, reason=""):
     image = getattr(profile, image_field)
     if not image:
         raise ValueError("The profile does not have this image.")
-    storage = image.storage
-    name = image.name
     with transaction.atomic():
         record_admin_action(
             request,
@@ -170,4 +168,3 @@ def remove_profile_image(request, profile, *, image_field, reason=""):
         )
         setattr(profile, image_field, "")
         profile.save(update_fields=(image_field, "updated_at"))
-        transaction.on_commit(lambda: storage.delete(name))

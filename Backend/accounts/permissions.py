@@ -12,5 +12,6 @@ class IsPostitAdmin(BasePermission):
             user
             and user.is_authenticated
             and user.is_active
+            and user.is_staff
             and user.role == User.Role.ADMIN
         )

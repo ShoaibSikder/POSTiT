@@ -1,0 +1,51 @@
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode, caches, and test/coverage output
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Python build/package output
+build/
+dist/
+*.egg-info/
+
+# Local databases and database journals
+**/db.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Django uploaded media: preserve only the tracked directory markers
+Backend/media/**
+!Backend/media/posts/
+!Backend/media/profiles/
+!Backend/media/posts/.gitkeep
+!Backend/media/profiles/.gitkeep
+
+# Django collected static files and logs
+Backend/staticfiles/
+*.log
+
+# VS Code local state; keep shareable workspace settings
+.vscode/*
+!.vscode/
+!.vscode/settings.json
+Backend/.vscode/*
+!Backend/.vscode/
+!Backend/.vscode/settings.json

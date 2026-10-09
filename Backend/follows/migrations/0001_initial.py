@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'indexes': [models.Index(fields=['following', 'created_at'], name='follows_target_date_idx')],
-                'constraints': [models.UniqueConstraint(fields=('follower', 'following'), name='follows_unique_relationship'), models.CheckConstraint(condition=models.Q(('follower', models.F('following')), _negated=True), name='follows_no_self_follow')],
+                'constraints': [models.UniqueConstraint(fields=('follower', 'following'), name='follows_unique_relationship'), models.CheckConstraint(check=models.Q(('follower', models.F('following')), _negated=True), name='follows_no_self_follow')],
             },
         ),
     ]
