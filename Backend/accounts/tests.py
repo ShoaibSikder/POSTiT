@@ -33,6 +33,7 @@ class UserManagerTests(TestCase):
 
 
 class AuthenticationAPITests(TestCase):
+    csrf_url = "/api/v1/auth/csrf/"
     registration_url = "/api/v1/auth/register/"
     login_url = "/api/v1/auth/login/"
     logout_url = "/api/v1/auth/logout/"
@@ -109,6 +110,25 @@ class AuthenticationAPITests(TestCase):
         self.assertEqual(logout_response.status_code, 204)
         self.assertEqual(self.client.get(self.current_user_url).status_code, 403)
 
+    def test_login_remember_option_controls_session_lifetime(self):
+        User.objects.create_user(
+            username="alice",
+            email="alice@example.com",
+            password="unique-test-password-123",
+        )
+
+        response = self.client.post(
+            self.login_url,
+            {
+                "identifier": "alice",
+                "password": "unique-test-password-123",
+                "remember": False,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.client.session.get_expire_at_browser_close())
+
     def test_login_error_does_not_disclose_account_existence(self):
         response = self.client.post(
             self.login_url,
@@ -124,12 +144,25 @@ class AuthenticationAPITests(TestCase):
     def test_current_user_requires_authentication(self):
         self.assertEqual(self.client.get(self.current_user_url).status_code, 403)
 
+    def test_development_frontend_origin_is_allowed_by_cors(self):
+        response = self.client.get(
+            self.csrf_url,
+            HTTP_ORIGIN="http://127.0.0.1:3002",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response["Access-Control-Allow-Origin"],
+            "http://127.0.0.1:3002",
+        )
+        self.assertEqual(response["Access-Control-Allow-Credentials"], "true")
+
     def test_registration_requires_csrf_for_anonymous_requests(self):
         client = APIClient(enforce_csrf_checks=True)
         response = client.post(self.registration_url, self.registration_data())
         self.assertEqual(response.status_code, 403)
 
-        csrf_response = client.get("/api/v1/auth/csrf/")
+        csrf_response = client.get(self.csrf_url)
         token = csrf_response.data["csrfToken"]
         response = client.post(
             self.registration_url,
@@ -152,7 +185,7 @@ class AuthenticationAPITests(TestCase):
 
         self.assertEqual(client.post(self.login_url, credentials).status_code, 403)
 
-        csrf_token = client.get("/api/v1/auth/csrf/").data["csrfToken"]
+        csrf_token = client.get(self.csrf_url).data["csrfToken"]
         self.assertEqual(
             client.post(
                 self.login_url,
@@ -163,7 +196,7 @@ class AuthenticationAPITests(TestCase):
         )
         self.assertEqual(client.post(self.logout_url).status_code, 403)
 
-        csrf_token = client.get("/api/v1/auth/csrf/").data["csrfToken"]
+        csrf_token = client.get(self.csrf_url).data["csrfToken"]
         self.assertEqual(
             client.post(
                 self.logout_url,
