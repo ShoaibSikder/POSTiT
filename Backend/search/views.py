@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import NotAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from accounts.models import User
+from profiles.services import profiles_with_relationship_counts
 from posts.models import Post
 from posts.serializers import PostSerializer
 from posts.services import posts_with_engagement
-from profiles.services import profiles_with_relationship_counts
 
 from .models import SearchActivity
 from .filters import filter_users
@@ -25,14 +26,35 @@ class UserSearchView(generics.ListAPIView):
         serializer = UserSearchSerializer(data=self.request.query_params)
         serializer.is_valid(raise_exception=True)
         term = serializer.validated_data["q"]
+        if not term and not self.request.user.is_authenticated:
+            raise NotAuthenticated("Sign in to browse all people.")
         SearchActivity.objects.create(
             user=self.request.user if self.request.user.is_authenticated else None,
             search_type=SearchActivity.SearchType.USERS,
         )
-        return filter_users(
-            profiles_with_relationship_counts(),
-            term,
-        ).order_by("username")
+        queryset = profiles_with_relationship_counts()
+        if self.request.user.is_authenticated:
+            queryset = queryset.exclude(pk=self.request.user.pk)
+        if term:
+            queryset = filter_users(queryset, term)
+        return queryset.order_by("username")
+
+
+class UserSuggestionsView(generics.ListAPIView):
+    serializer_class = UserSearchResultSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        followed_users = user.following_relationships.values_list(
+            "following_id", flat=True
+        )
+        return (
+            profiles_with_relationship_counts()
+            .exclude(pk=user.pk)
+            .exclude(pk__in=followed_users)
+            .order_by("-follower_count", "username")
+        )
 
 
 class PostSearchView(generics.ListAPIView):

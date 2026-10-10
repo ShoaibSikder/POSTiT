@@ -28,7 +28,13 @@ class SearchQuerySerializer(serializers.Serializer):
 
 
 class UserSearchSerializer(SearchQuerySerializer):
-    q = serializers.CharField(min_length=1, max_length=100, trim_whitespace=True)
+    q = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=100,
+        default="",
+        trim_whitespace=True,
+    )
 
 
 class PostSearchSerializer(SearchQuerySerializer):
