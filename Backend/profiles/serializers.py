@@ -26,6 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     )
     follower_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
+    post_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -39,6 +40,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "cover_image",
             "follower_count",
             "following_count",
+            "post_count",
             "created_at",
             "updated_at",
         )
@@ -47,6 +49,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username",
             "follower_count",
             "following_count",
+            "post_count",
             "created_at",
             "updated_at",
         )
@@ -56,6 +59,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, instance):
         return getattr(instance.user, "following_count", 0)
+
+    def get_post_count(self, instance):
+        return getattr(instance.user, "post_count", 0)
 
     def update(self, instance, validated_data):
         user_fields = validated_data.pop("user", {})

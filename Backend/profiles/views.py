@@ -40,7 +40,11 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         if not self.request.user.is_authenticated:
             raise PermissionDenied("Authentication is required.")
-        return self.request.user.profile
+        user = get_object_or_404(
+            profiles_with_relationship_counts(),
+            pk=self.request.user.pk,
+        )
+        return user.profile
 
 
 class ProfileMediaListCreateView(generics.ListCreateAPIView):

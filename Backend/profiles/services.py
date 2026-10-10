@@ -18,6 +18,6 @@ def profiles_with_relationship_counts():
                 filter=Q(following_relationships__following__is_active=True),
                 distinct=True,
             ),
+            post_count=Count("posts", distinct=True),
         )
     )
-
