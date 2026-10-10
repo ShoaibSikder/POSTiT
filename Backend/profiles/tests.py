@@ -7,6 +7,8 @@ from django.test import TestCase, override_settings
 from PIL import Image
 from rest_framework.test import APIClient
 
+from follows.models import Follow
+from posts.models import Post
 from .models import Profile, ProfileMedia
 
 
@@ -63,6 +65,18 @@ class ProfileAPITests(TestCase):
         self.assertEqual(response.data["username"], "alice")
         self.assertNotIn("email", response.data)
 
+    def test_owner_profile_returns_accurate_relationship_and_post_counts(self):
+        Follow.objects.create(follower=self.other_user, following=self.user)
+        Follow.objects.create(follower=self.user, following=self.other_user)
+        Post.objects.create(author=self.user, content="One authored post")
+
+        response = self.client.get("/api/v1/profiles/me/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["follower_count"], 1)
+        self.assertEqual(response.data["following_count"], 1)
+        self.assertEqual(response.data["post_count"], 1)
+
     def test_user_cannot_edit_another_users_profile(self):
         response = self.client.patch(
             "/api/v1/users/bob/",
@@ -82,6 +96,8 @@ class ProfileAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data["avatar"].endswith(".jpg"))
         self.assertTrue(self.user.profile.avatar.storage.exists(self.user.profile.avatar.name))
+        current_user = self.client.get("/api/v1/auth/me/")
+        self.assertTrue(current_user.data["avatar"].endswith(".jpg"))
 
         response = self.client.post(
             "/api/v1/users/alice/media/",
