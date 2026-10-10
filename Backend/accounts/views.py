@@ -1,4 +1,5 @@
 from django.contrib.auth import login, logout
+from django.conf import settings
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
@@ -26,7 +27,10 @@ class RegistrationView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-        return Response(UserSerializer(user).data, status=HTTP_201_CREATED)
+        return Response(
+            UserSerializer(user, context={"request": request}).data,
+            status=HTTP_201_CREATED,
+        )
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -41,7 +45,12 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-        return Response(UserSerializer(user).data)
+        request.session.set_expiry(
+            settings.SESSION_COOKIE_AGE
+            if serializer.validated_data["remember"]
+            else 0
+        )
+        return Response(UserSerializer(user, context={"request": request}).data)
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -57,4 +66,4 @@ class CurrentUserView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        return Response(UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user, context={"request": request}).data)

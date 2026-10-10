@@ -8,10 +8,19 @@ from .validators import validate_public_username
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("id", "username", "email", "role", "date_joined")
+        fields = ("id", "username", "email", "role", "date_joined", "avatar")
         read_only_fields = fields
+
+    def get_avatar(self, instance):
+        avatar = instance.profile.avatar
+        if not avatar:
+            return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(avatar.url) if request else avatar.url
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -77,6 +86,7 @@ class LoginSerializer(serializers.Serializer):
         trim_whitespace=False,
         style={"input_type": "password"},
     )
+    remember = serializers.BooleanField(required=False, default=True)
 
     def validate(self, attrs):
         identifier = attrs["identifier"].strip()
