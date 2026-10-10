@@ -1,51 +1,346 @@
 # POSTiT
 
-POSTiT is a small social application with a Django REST Framework backend,
-PostgreSQL persistence, session authentication, local development media
-storage, and a vanilla HTML/CSS/JavaScript frontend. The backend is split into
-domain apps rather than a single generic CRUD module.
+![Frontend](https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-blue)
+![Backend](https://img.shields.io/badge/Backend-Django-0C4B33)
+![API](https://img.shields.io/badge/API-Django%20REST%20Framework-red)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-336791)
 
-## Backend structure
+POSTiT is a full-stack social application for sharing posts, discovering people, and keeping up with a community. It pairs a responsive, framework-free HTML/CSS/JavaScript frontend with a Django REST Framework API and PostgreSQL database.
 
-| App | Responsibility |
-| --- | --- |
-| `config` | Environment-specific settings, root URLs, ASGI and WSGI |
-| `accounts` | Custom user, registration, session authentication and roles |
-| `profiles` | Public profiles, avatars, cover images and profile gallery |
-| `posts` | Post lifecycle, images, validation, filtering and engagement queries |
-| `comments`, `likes`, `follows` | Separate interaction records and ownership rules |
-| `feed` | Chronological posts from the signed-in user and followed accounts |
-| `search` | Paginated user and post search, date/author filters, aggregate search activity |
-| `notifications` | Persisted follow/like/comment notifications and read state |
-| `moderation` | Protected admin APIs, account controls, content moderation and platform limits |
-| `audit` | Append-only records of administrator actions |
-| `common` | Shared validation, permissions and pagination |
+Members can create posts and comments, follow other accounts, manage profile photos, and receive notifications. Platform administrators have a protected moderation dashboard. Authentication, permissions, and application data are handled by the backend; the frontend does not rely on demo accounts or bundled sample content.
 
-The implementation follows the supplied project document's scope: ordinary
-users can manage only their own content, and admin access is checked by the
-backend on every protected request. Search activity stores its category,
-account, and timestamp, not the user's raw query.
+## Table Of Contents
 
-## Windows PowerShell setup
+- [Screenshots](#screenshots)
+- [Core Features](#core-features)
+- [Role-Based Access](#role-based-access)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Backend Apps](#backend-apps)
+- [Frontend Architecture](#frontend-architecture)
+- [API Overview](#api-overview)
+- [Environment Variables](#environment-variables)
+- [Installation And Setup](#installation-and-setup)
+- [Testing And Verification](#testing-and-verification)
+- [Development Notes](#development-notes)
 
-From `POSTiT\Backend`, prepare the environment:
+## Screenshots
+
+Application screenshots are stored in [`Frontend/assets/images`](Frontend/assets/images).
+
+### Authentication
+
+<div>
+  <a href="Frontend/assets/images/login.png">
+    <img src="Frontend/assets/images/login.png" width="420" alt="POSTiT sign-in page" />
+  </a>
+  <a href="Frontend/assets/images/Register.png">
+    <img src="Frontend/assets/images/Register.png" width="420" alt="POSTiT account registration page" />
+  </a>
+</div>
+
+### Member Experience
+
+<div>
+  <a href="Frontend/assets/images/home.png">
+    <img src="Frontend/assets/images/home.png" width="420" alt="POSTiT member home and feed" />
+  </a>
+  <a href="Frontend/assets/images/search.png">
+    <img src="Frontend/assets/images/search.png" width="420" alt="POSTiT people and post search" />
+  </a>
+  <a href="Frontend/assets/images/notification.png">
+    <img src="Frontend/assets/images/notification.png" width="420" alt="POSTiT notifications page" />
+  </a>
+</div>
+
+### Administration
+
+<div>
+  <a href="Frontend/assets/images/Admin.png">
+    <img src="Frontend/assets/images/Admin.png" width="640" alt="POSTiT administrator dashboard" />
+  </a>
+</div>
+
+## Core Features
+
+### Authentication And Profiles
+
+- Register and sign in using a username or email address.
+- Authenticate API requests with Django sessions and CSRF protection.
+- View public profiles and edit your own profile information.
+- Upload an avatar, cover image, and profile gallery photos.
+- See post, follower, and following counts on profiles.
+
+### Posts And Community
+
+- Create text and image posts and manage your own posts.
+- Like and unlike posts.
+- View and add comments, and remove your own comments.
+- Browse a personalized chronological feed.
+- Discover and follow other accounts.
+- Browse all other active accounts from the People search tab; your own account is excluded by default.
+- Search posts by phrase, author, and date range.
+
+### Notifications
+
+- View notifications generated by follows and post interactions.
+- See unread notification counts.
+- Mark one notification or all notifications as read.
+
+### Administration
+
+- View platform activity and aggregate counts.
+- Search and manage user accounts.
+- Review and moderate posts, comments, media, and notifications.
+- Inspect follow relationships, search activity, and administrator audit records.
+- Configure supported platform limits.
+- Keep privileged operations protected by backend role and permission checks.
+
+## Role-Based Access
+
+POSTiT has two access levels:
+
+### Members
+
+Authenticated members can create and manage their own content, edit their own profile, follow other members, and view their notifications. Ownership is enforced by the API, not just by hiding frontend controls.
+
+### Administrators
+
+Administrator endpoints require an authenticated account with the administrator role and staff permission. Administrative actions are validated by the backend, and moderation operations that require a reason are recorded in the audit log.
+
+Unauthenticated visitors can access public content and account registration/sign-in. Features not implemented by the backend (including direct messages, saved posts, password reset, and direct post permalinks) are not simulated in the frontend.
+
+## Tech Stack
+
+### Frontend
+
+- HTML5
+- CSS, including responsive layouts and light/dark themes
+- Vanilla JavaScript with native ES modules
+- Fetch API for Django REST Framework requests
+- No frontend framework or Node.js build step
+
+### Backend
+
+- Python
+- Django 5.2
+- Django REST Framework
+- PostgreSQL
+- `django-cors-headers`
+- Pillow for uploaded image validation and processing
+- Django session authentication with CSRF protection
+
+## Project Structure
+
+```text
+POSTiT/
+  Backend/
+    accounts/
+    audit/
+    comments/
+    common/
+    config/
+      settings/
+        base.py
+        development.py
+        production.py
+        test.py
+    feed/
+    follows/
+    likes/
+    moderation/
+    notifications/
+    posts/
+    profiles/
+    search/
+    tests/
+    media/
+    manage.py
+    requirements.txt
+    .env.example
+
+  Frontend/
+    assets/
+      images/
+    css/
+    js/
+      api/
+      components/
+      pages/
+      services/
+      utils/
+    pages/
+    index.html
+
+  Documentation/
+  README.md
+```
+
+## Backend Apps
+
+### `accounts`
+
+Custom user model, registration, login/logout, current-user endpoint, and session authentication.
+
+### `profiles`
+
+Public and owner profile endpoints, relationship and post counts, profile image uploads, and gallery media.
+
+### `posts`, `comments`, `likes`, and `follows`
+
+Post and image lifecycle, comment ownership, post reactions, and follower relationships.
+
+### `feed`
+
+Paginated chronological posts from the signed-in member and accounts they follow.
+
+### `search`
+
+Paginated people and post search, including author and date filters, people discovery, and search activity records.
+
+### `notifications`
+
+Persisted follow and post-interaction notifications, unread counts, and read state.
+
+### `moderation` and `audit`
+
+Protected administrator endpoints for dashboard metrics, account and content moderation, platform limits, and append-only records of administrator actions.
+
+### `common`
+
+Shared validation, permission, and pagination helpers.
+
+## Frontend Architecture
+
+### `Frontend/index.html`
+
+The static entry page. It initializes the theme and directs visitors to the appropriate member or sign-in experience.
+
+### `Frontend/pages`
+
+HTML documents for sign-in, registration, feed, profiles, search, notifications, and the administrator dashboard.
+
+### `Frontend/js/app.js`
+
+Shared application shell initialization, navigation, and authentication guards.
+
+### `Frontend/js/api`
+
+Domain API modules for authentication, posts, profiles, comments, follows, search, notifications, and administration. The shared API client sends credentials and obtains a CSRF token before state-changing requests.
+
+### `Frontend/js/components`
+
+Reusable interface elements, including navigation, post cards and actions, comment panels, dialogs, icons, password controls, and toast messages.
+
+### `Frontend/js/pages`
+
+Page-specific JavaScript that loads database-backed API data and wires page interactions.
+
+### `Frontend/css`
+
+Design tokens, shared components, page layouts, and responsive styles.
+
+## API Overview
+
+Base API URL:
+
+```text
+http://127.0.0.1:8000/api/v1/
+```
+
+All state-changing requests use Django session authentication and must include the CSRF token obtained from `auth/csrf/`.
+
+### Authentication And Member APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/auth/csrf/` | Obtain a CSRF token |
+| `POST` | `/auth/register/` | Register and start a session |
+| `POST` | `/auth/login/` | Sign in with username or email |
+| `POST` | `/auth/logout/` | End the current session |
+| `GET` | `/auth/me/` | Get the authenticated member |
+| `GET`, `PATCH` | `/users/<username>/` | View a public profile or edit your own |
+| `GET`, `PATCH` | `/profiles/me/` | View or edit the current profile |
+| `GET`, `POST` | `/users/<username>/media/` | List or add profile gallery media |
+| `DELETE` | `/profile-media/<id>/` | Remove your own gallery media |
+| `GET`, `POST` | `/posts/` | List or create posts |
+| `GET`, `PATCH`, `DELETE` | `/posts/<id>/` | View or manage a post |
+| `GET` | `/users/<username>/posts/` | List a member's posts |
+| `GET`, `POST` | `/posts/<id>/comments/` | List or add comments |
+| `GET`, `PATCH`, `DELETE` | `/comments/<id>/` | View or manage a comment |
+| `POST`, `DELETE` | `/posts/<id>/like/` | Like or unlike a post |
+| `POST`, `DELETE` | `/users/<username>/follow/` | Follow or unfollow a member |
+| `GET` | `/users/<username>/followers/` | List a member's followers or following |
+| `GET` | `/feed/` | Get the personalized feed |
+| `GET` | `/search/users/?q=<term>` | Search people; with no term, list all other active accounts for signed-in members |
+| `GET` | `/search/suggestions/` | Get suggested accounts for the signed-in member |
+| `GET` | `/search/posts/?q=<term>&author=<username>&from=<date>&to=<date>` | Search posts by phrase, author, and date range |
+| `GET` | `/notifications/` | List notifications and unread count |
+| `POST` | `/notifications/<id>/read/` | Mark a notification as read |
+| `POST` | `/notifications/read-all/` | Mark all notifications as read |
+
+Lists are paginated. Post and profile media uploads use `multipart/form-data`; image uploads accept JPEG, PNG, and WebP. Local development media is served by Django only when debug mode is enabled.
+
+### Administrator APIs
+
+Administrator endpoints are served under `/admin/`:
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/admin/dashboard/` | Platform metrics and recent administrator actions |
+| `GET` | `/admin/users/` | Search and filter accounts |
+| `POST` | `/admin/users/<id>/ban/`, `unban/`, `deactivate/`, `activate/` | Manage account access |
+| `GET`, `DELETE` | `/admin/posts/`, `/admin/posts/<id>/` | Review or remove posts |
+| `GET`, `DELETE` | `/admin/comments/`, `/admin/comments/<id>/` | Review or remove comments |
+| `GET` | `/admin/media/<post\|profile>/` | Review post or profile media |
+| `DELETE` | `/admin/media/<post\|profile\|avatar\|cover>/<id>/` | Remove media |
+| `GET`, `DELETE` | `/admin/notifications/`, `/admin/notifications/<id>/` | Review or remove notifications |
+| `GET` | `/admin/relationships/` | Inspect relationship activity |
+| `GET` | `/admin/activity/` | Inspect activity aggregates |
+| `GET` | `/admin/audit/` | Review administrator audit records |
+| `GET`, `PUT` | `/admin/settings/` | Read or update supported platform limits |
+
+Some moderation operations require a reason; consult the API validation response when a request is rejected.
+
+## Environment Variables
+
+Create a private `Backend/.env` from the example file. Do not commit secrets or database credentials.
+
+```env
+DJANGO_SETTINGS_MODULE=config.settings.development
+DJANGO_SECRET_KEY=replace-with-a-local-secret
+POSTIT_DB_NAME=postit
+POSTIT_DB_USER=postit
+POSTIT_DB_PASSWORD=replace-with-your-database-password
+POSTIT_DB_HOST=127.0.0.1
+POSTIT_DB_PORT=5432
+```
+
+Optional application limits are available in `Backend/.env.example`: maximum image size, post image count, profile gallery count, post text length, and comment text length. Production settings also require `DJANGO_ALLOWED_HOSTS` and should be configured with deployment-specific trusted origins and secure cookies.
+
+The frontend defaults to `http://127.0.0.1:8000`. To use a different API origin, open the frontend with `?api=http://your-backend-host:port`; that origin is saved in browser local storage as `postit-api-origin`.
+
+## Installation And Setup
+
+### Prerequisites
+
+- Python and pip
+- PostgreSQL
+- A modern browser
+
+### Backend Setup
+
+From the repository root in PowerShell, create and activate a virtual environment and install the backend dependencies:
 
 ```powershell
+Set-Location Backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Edit the ignored local `.env` privately. Configure `DJANGO_SECRET_KEY` and
-`POSTIT_DB_NAME`, `POSTIT_DB_USER`, `POSTIT_DB_PASSWORD`, `POSTIT_DB_HOST`, and
-`POSTIT_DB_PORT`. Database credentials and `.env` must never be committed.
-Development settings load this local file; production settings require
-environment-provided secrets and host configuration.
-
-The first migration already creates the custom `accounts.User` model. Apply
-the checked-in migrations only after the PostgreSQL role/database and private
-environment values are configured:
+Edit `Backend/.env` with your local secret and PostgreSQL connection details. Create the configured PostgreSQL role and database, then run:
 
 ```powershell
 python manage.py check
@@ -54,93 +349,42 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Do not run `makemigrations` as a deployment step; migrations are source
-controlled. For offline tests, Django uses the project's in-memory SQLite
-test settings:
+The API is available at `http://127.0.0.1:8000/api/v1/`.
+
+### Frontend Setup
+
+In a second PowerShell terminal opened at the repository root, serve the static frontend:
+
+```powershell
+python -m http.server 5173 --directory Frontend
+```
+
+Open `http://127.0.0.1:5173/`. For development, CORS and CSRF are configured for frontend origins on ports `3000`, `3002`, and `5173`. Keep the Django backend running while using the frontend.
+
+## Testing And Verification
+
+Run Django's system check:
+
+```powershell
+Set-Location Backend
+.\.venv\Scripts\Activate.ps1
+python manage.py check
+```
+
+Run the backend test suite with the project's in-memory SQLite test settings:
 
 ```powershell
 $env:DJANGO_SETTINGS_MODULE = "config.settings.test"
-$env:PYTHONDONTWRITEBYTECODE = "1"
 python manage.py test accounts profiles posts comments likes follows feed search notifications moderation audit common tests
 ```
 
-## API overview
+The frontend is plain HTML, CSS, and JavaScript and does not have a separate package installation or build step. Check browser developer tools for failed API requests and confirm Django is running at the configured API origin.
 
-All application routes use `/api/v1/`. Unsafe session-authenticated browser
-requests must send the CSRF cookie token in `X-CSRFToken`.
+## Development Notes
 
-### Authentication and user content
-
-| Method | Route | Purpose |
-| --- | --- | --- |
-| `GET` | `auth/csrf/` | Obtain CSRF token |
-| `POST` | `auth/register/` | Create a standard user and start a session |
-| `POST` | `auth/login/` | Start a session using username or email |
-| `POST` | `auth/logout/` | End the session |
-| `GET` | `auth/me/` | View the authenticated account |
-| `GET`, `PATCH` | `users/<username>/` | View a public profile; owner-only edit |
-| `GET`, `PATCH` | `profiles/me/` | View or edit the current profile |
-| `GET`, `POST` | `users/<username>/media/` | List or add the owner's profile gallery media |
-| `DELETE` | `profile-media/<id>/` | Remove own gallery media |
-| `GET`, `POST` | `posts/` | List or create posts |
-| `GET`, `PATCH`, `DELETE` | `posts/<id>/` | Read or manage an owned post |
-| `GET` | `users/<username>/posts/` | List a user's posts |
-| `GET`, `POST` | `posts/<id>/comments/` | List or add comments |
-| `GET`, `PATCH`, `DELETE` | `comments/<id>/` | Read or manage an owned comment |
-| `POST`, `DELETE` | `posts/<id>/like/` | Like or unlike a post |
-| `POST`, `DELETE` | `users/<username>/follow/` | Follow or unfollow a user |
-| `GET` | `users/<username>/followers/` | List followers |
-| `GET` | `users/<username>/following/` | List followed accounts |
-| `GET` | `feed/` | Personalized, paginated chronological feed |
-| `GET` | `search/users/?q=<term>` | Case-insensitive username/name search |
-| `GET` | `search/posts/?q=<term>&author=<username>&from=<date>&to=<date>` | Search posts with optional author/date filters |
-| `GET` | `notifications/` | List own notifications and unread count |
-| `POST` | `notifications/<id>/read/` | Mark an owned notification as read |
-| `POST` | `notifications/read-all/` | Mark all own notifications as read |
-
-Lists are paginated (`page` and optional `page_size`, maximum 100). Post
-responses include live like/comment counts and the caller's like state. Feed
-responses also include `is_own_post`. Profile and post uploads use
-`multipart/form-data`; repeated `images` fields attach post images and
-`remove_image_ids` removes owned attachments during edits. Only verified JPEG,
-PNG, and WebP images are accepted.
-
-During local development, uploaded files are stored under `Backend\media\posts`
-or `Backend\media\profiles` (with year/month subdirectories). These directories
-are kept in Git with placeholders, while uploaded files remain ignored. In
-production, configure protected media storage and serving separately.
-
-### Administrator APIs
-
-All administrator APIs require an active account with both the administrator
-role and Django staff permission. They are served under `/admin/`:
-
-| Method | Route | Purpose |
-| --- | --- | --- |
-| `GET` | `admin/dashboard/` | Global counts and recent administrator actions |
-| `GET` | `admin/users/?q=&status=` | Search/filter user accounts |
-| `POST` | `admin/users/<id>/ban/`, `unban/`, `deactivate/`, `activate/` | Manage account access; POST body must include a short `reason` |
-| `GET`, `DELETE` | `admin/posts/`, `admin/posts/<id>/` | Inspect/remove any post |
-| `GET`, `DELETE` | `admin/comments/`, `admin/comments/<id>/` | Inspect/remove any comment |
-| `GET` | `admin/media/<post\|profile>/` | Review paginated post or profile gallery media |
-| `DELETE` | `admin/media/<post\|profile\|avatar\|cover>/<id>/` | Remove a media item with an audited reason |
-| `GET`, `DELETE` | `admin/notifications/`, `admin/notifications/<id>/` | Monitor/filter or remove a notification |
-| `GET` | `admin/relationships/` | Inspect aggregate and recent follow activity |
-| `GET` | `admin/activity/?from=&to=&type=` | Inspect date/type-filtered activity aggregates |
-| `GET` | `admin/audit/?actor=&action=&target=` | Review administrator audit records |
-| `GET`, `PUT` | `admin/settings/` | Read/update supported operational limits |
-
-Admin content/media/notification deletion requires a reason, and the action is
-recorded with the administrator, target, timestamp, IP when available, and
-reason. Audit records have no public write endpoint and are append-only.
-Self-service registration cannot grant an admin role. The last active staff
-administrator cannot be deactivated or banned. Admin-configured operational
-limits are validated against supported ceilings and apply to new uploads and
-content.
-
-## Configuration
-
-Image bytes, post image count, profile gallery count, post text length, and
-comment text length have conservative development defaults and can be
-overridden through the protected admin settings API. Configure the production
-web server to serve media safely; Django serves local media only in development.
+- PostgreSQL is the configured application database; the SQLite database is used for tests only.
+- The browser uses Django session cookies. Requests include credentials, and unsafe methods first request a CSRF token.
+- The development settings allow the documented local frontend ports. Production CORS, trusted origins, allowed hosts, secrets, and secure cookie settings must match the deployed environment.
+- Uploaded media is stored under `Backend/media/` during local development. Production media storage and delivery must be configured separately.
+- The API is the source of truth for users, posts, profile metrics, comments, follows, and notifications. Do not add reference/demo records to the frontend.
+- Database migrations are source controlled; apply them with `migrate` rather than generating migrations as a deployment step.
