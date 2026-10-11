@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6fb">
+    <meta name="description" content="POSTiT is a place to share moments and find your people.">
+    <title>POSTiT — Share your moments</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script>
+      (() => {
+        const saved = localStorage.getItem("postit-theme");
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+    <script type="module" src="js/pages/home.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" data-sidebar aria-label="Sidebar navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" data-topbar></header>
+        <main class="page-content landing-content" id="main-content">
+          <section class="hero" aria-labelledby="hero-heading">
+            <div class="hero-copy">
+              <span class="eyebrow">A little more human, every day</span>
+              <h1 id="hero-heading">Share moments.<br><span>Connect people.</span></h1>
+              <p>Your thoughts, your people, your corner of the internet. Make space for the moments worth remembering.</p>
+              <div class="hero-actions" data-hero-actions>
+                <a class="button button-primary" href="pages/register.html">Create your account <span aria-hidden="true">→</span></a>
+                <a class="button button-secondary" href="pages/login.html">I already have an account</a>
+              </div>
+              <div class="hero-footnote"><span class="status-dot"></span> A community built around real moments</div>
+            </div>
+            <div class="hero-orbit" aria-label="An illustrated sunset over a mountain lake">
+              <div class="hero-art">
+                <div class="hero-sun"></div>
+                <div class="hero-landscape"><span class="hero-landscape-line"></span></div>
+                <div class="hero-polaroid hero-polaroid-one"><div class="hero-polaroid-photo"></div></div>
+                <div class="hero-polaroid hero-polaroid-two"><div class="hero-polaroid-photo"></div></div>
+              </div>
+            </div>
+          </section>
+          <section class="feature-row" aria-label="What you can do on POSTiT">
+            <article class="feature-card"><span class="feature-icon feature-icon-purple">01</span><h2>Share your point of view</h2><p>Post a thought, a photo, or the small thing that made your day.</p></article>
+            <article class="feature-card"><span class="feature-icon feature-icon-pink">02</span><h2>Find your people</h2><p>Explore posts and follow the voices you want to hear from.</p></article>
+            <article class="feature-card"><span class="feature-icon feature-icon-green">03</span><h2>Keep the conversation going</h2><p>Leave a kind comment and stay in the loop with notifications.</p></article>
+          </section>
+          <footer class="site-footer"><span>POSTiT · Share moments, connect people.</span><a href="pages/search.html">Explore the community</a></footer>
+        </main>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+    </div>
+  </body>
+</html>
