@@ -118,7 +118,6 @@ Unauthenticated visitors can access public content and account registration/sign
 - CSS, including responsive layouts and light/dark themes
 - Vanilla JavaScript with native ES modules
 - Fetch API for Django REST Framework requests
-- No frontend framework or Node.js build step
 
 ### Backend
 
