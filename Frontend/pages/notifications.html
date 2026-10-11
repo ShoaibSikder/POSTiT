@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6fb">
+    <title>Notifications | POSTiT</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script>
+      (() => {
+        const saved = localStorage.getItem("postit-theme");
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+    <script type="module" src="../js/pages/notifications.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" data-sidebar aria-label="Sidebar navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" data-topbar></header>
+        <main class="page-content" id="main-content">
+          <header class="page-heading">
+            <div><span class="eyebrow">Activity</span><h1>Notifications</h1><p>Keep up with people and posts you care about.</p></div>
+            <button class="button button-secondary" id="mark-all-read" type="button">Mark all as read</button>
+          </header>
+          <section class="notification-list section-card" id="notification-list"><div class="loading-state"><span class="spinner" aria-hidden="true"></span>Loading notifications…</div></section>
+          <div class="pagination" id="notification-pagination"></div>
+        </main>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+    </div>
+  </body>
+</html>
