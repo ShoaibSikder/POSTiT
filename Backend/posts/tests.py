@@ -43,6 +43,8 @@ class PostAPITests(TestCase):
         self.media_directory.cleanup()
 
     def test_create_post_with_images_and_retrieve_it(self):
+        self.user.profile.avatar = image_upload("avatar.jpg")
+        self.user.profile.save(update_fields=("avatar",))
         response = self.client.post(
             "/api/v1/posts/",
             {
@@ -57,6 +59,7 @@ class PostAPITests(TestCase):
 
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["author"], "alice")
+        self.assertTrue(response.data["author_avatar"].endswith(".jpg"))
         self.assertEqual(len(response.data["images"]), 2)
         self.assertEqual(PostImage.objects.filter(post_id=response.data["id"]).count(), 2)
 

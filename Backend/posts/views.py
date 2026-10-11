@@ -22,7 +22,7 @@ class PostListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return posts_with_engagement(
             Post.objects.filter(author__is_active=True)
-            .select_related("author")
+            .select_related("author", "author__profile")
             .prefetch_related(
                 Prefetch(
                     "images",
@@ -39,7 +39,10 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return posts_with_engagement(
-            Post.objects.filter(author__is_active=True).select_related("author"),
+            Post.objects.filter(author__is_active=True).select_related(
+                "author",
+                "author__profile",
+            ),
             self.request.user,
         ).prefetch_related("images")
 
@@ -56,7 +59,7 @@ class UserPostListView(generics.ListAPIView):
         )
         return posts_with_engagement(
             Post.objects.filter(author=user)
-            .select_related("author")
+            .select_related("author", "author__profile")
             .prefetch_related("images"),
             self.request.user,
         )

@@ -15,6 +15,7 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.username", read_only=True)
+    author_avatar = serializers.SerializerMethodField()
     content = serializers.CharField(required=False, allow_blank=True)
     images = PostImageSerializer(many=True, read_only=True)
     likes_count = serializers.IntegerField(read_only=True, default=0)
@@ -36,6 +37,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "author",
+            "author_avatar",
             "content",
             "images",
             "likes_count",
@@ -46,7 +48,20 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "author", "created_at", "updated_at")
+        read_only_fields = (
+            "id",
+            "author",
+            "author_avatar",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_author_avatar(self, instance):
+        avatar = instance.author.profile.avatar
+        if not avatar:
+            return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(avatar.url) if request else avatar.url
 
     def validate_content(self, value):
         return validate_post_content(value)

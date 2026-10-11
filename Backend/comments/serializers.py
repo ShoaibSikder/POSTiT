@@ -8,12 +8,35 @@ from .models import Comment
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.username", read_only=True)
+    author_avatar = serializers.SerializerMethodField()
     content = serializers.CharField()
 
     class Meta:
         model = Comment
-        fields = ("id", "post", "author", "content", "created_at", "updated_at")
-        read_only_fields = ("id", "post", "author", "created_at", "updated_at")
+        fields = (
+            "id",
+            "post",
+            "author",
+            "author_avatar",
+            "content",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = (
+            "id",
+            "post",
+            "author",
+            "author_avatar",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_author_avatar(self, instance):
+        avatar = instance.author.profile.avatar
+        if not avatar:
+            return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(avatar.url) if request else avatar.url
 
     def validate_content(self, value):
         content = value.strip()
