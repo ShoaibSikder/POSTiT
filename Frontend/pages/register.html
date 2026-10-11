@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6fb">
+    <title>Create account | POSTiT</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script>
+      (() => {
+        const saved = localStorage.getItem("postit-theme");
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+    <script type="module" src="../js/pages/register.js"></script>
+  </head>
+  <body class="auth-entry">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" data-sidebar aria-label="Sidebar navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" data-topbar></header>
+        <main class="page-content auth-page" id="main-content">
+          <section class="auth-panel">
+            <div class="auth-brand"><a href="../index.html" class="brand"><span class="brand-mark">P</span><span>POSTiT</span></a><button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme"></button></div>
+            <div class="auth-wrap">
+              <span class="eyebrow auth-eyebrow">Join the community</span>
+              <h1>Create your account</h1>
+              <p class="auth-subtitle">A few details and you’re ready to start sharing.</p>
+              <form class="auth-form" id="register-form" novalidate>
+                <label class="field"><span>Username</span><input name="username" autocomplete="username" minlength="3" maxlength="150" required placeholder="mayachen"></label>
+                <label class="field"><span>Email address</span><input name="email" type="email" autocomplete="email" required placeholder="maya@example.com"></label>
+                <div class="field"><label for="register-password">Password</label><div class="password-control"><input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><button type="button" data-toggle-password aria-label="Show password" aria-pressed="false">Show</button></div></div>
+                <div class="field"><label for="register-password-confirmation">Confirm password</label><div class="password-control"><input id="register-password-confirmation" name="password_confirmation" type="password" autocomplete="new-password" required placeholder="Repeat your password"><button type="button" data-toggle-password aria-label="Show password" aria-pressed="false">Show</button></div></div>
+                <p class="form-error" id="form-message" role="alert"></p>
+                <button class="button button-primary button-wide" type="submit">Create account</button>
+              </form>
+              <p class="auth-switch">Already have an account? <a href="login.html">Sign in</a></p>
+            </div>
+          </section>
+          <aside class="auth-visual" aria-label="A welcoming note">
+            <div class="auth-quote">
+              <blockquote>Find your people. Share your perspective. Keep the conversation human.</blockquote>
+              <p>Join a community built around real moments.</p>
+            </div>
+          </aside>
+        </main>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+    </div>
+  </body>
+</html>
