@@ -6,6 +6,8 @@ from .services import MAX_PLATFORM_LIMITS
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -18,8 +20,16 @@ class AdminUserSerializer(serializers.ModelSerializer):
             "is_active",
             "is_banned",
             "date_joined",
+            "avatar",
         )
         read_only_fields = fields
+
+    def get_avatar(self, instance):
+        avatar = instance.profile.avatar
+        if not avatar:
+            return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(avatar.url) if request else avatar.url
 
 
 class ModerationActionSerializer(serializers.Serializer):

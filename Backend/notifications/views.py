@@ -15,7 +15,10 @@ class NotificationListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.request.user).select_related(
-            "actor", "post", "comment"
+            "actor",
+            "actor__profile",
+            "post",
+            "comment",
         )
 
     def list(self, request, *args, **kwargs):

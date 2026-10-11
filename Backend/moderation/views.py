@@ -71,7 +71,7 @@ class AdminUserListView(generics.ListAPIView):
     serializer_class = AdminUserSerializer
 
     def get_queryset(self):
-        queryset = User.objects.all().order_by("username")
+        queryset = User.objects.select_related("profile").all().order_by("username")
         term = self.request.query_params.get("q", "").strip()
         active = self.request.query_params.get("is_active")
         account_status = self.request.query_params.get("status")
@@ -132,7 +132,7 @@ class AdminPostListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated, IsPlatformAdmin)
     serializer_class = PostSerializer
     queryset = (
-        Post.objects.select_related("author")
+        Post.objects.select_related("author", "author__profile")
         .prefetch_related("images")
         .order_by("-created_at")
     )
