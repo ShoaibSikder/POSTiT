@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6fb">
+    <title>Admin studio | POSTiT</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script>
+      (() => {
+        const saved = localStorage.getItem("postit-theme");
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+    <script type="module" src="../js/pages/admin.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" data-sidebar aria-label="Sidebar navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" data-topbar></header>
+        <main class="page-content" id="main-content">
+          <header class="page-heading"><div><span class="eyebrow">Platform operations</span><h1>Admin studio</h1><p>Moderate POSTiT with accountable, reason-tracked actions.</p></div></header>
+          <nav class="admin-tabs" aria-label="Admin sections" role="tablist">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-admin-tab="overview">Overview</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="users">People</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="content">Content</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="media">Media</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="notifications">Notifications</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="relationships">Relationships</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="audit">Audit</button>
+            <button type="button" role="tab" aria-selected="false" data-admin-tab="settings">Settings</button>
+          </nav>
+          <section class="admin-panel" id="admin-content" aria-live="polite"><div class="loading-state"><span class="spinner" aria-hidden="true"></span>Loading platform overview…</div></section>
+        </main>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+    </div>
+  </body>
+</html>
