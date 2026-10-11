@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6fb">
+    <title>Search | POSTiT</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script>
+      (() => {
+        const saved = localStorage.getItem("postit-theme");
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+    <script type="module" src="../js/pages/search.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" data-sidebar aria-label="Sidebar navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" data-topbar></header>
+        <main class="page-content" id="main-content">
+          <header class="page-heading"><div><span class="eyebrow">Discover</span><h1>Search POSTiT</h1><p>Find people and conversations that matter to you.</p></div></header>
+          <section class="search-panel">
+            <form class="search-form" id="search-form" role="search">
+              <label class="field"><span class="sr-only">Search POSTiT</span><input id="search-query" name="q" value="" placeholder="Search by name, username, or post content" autocomplete="off"></label>
+              <button class="button button-primary" type="submit">Search</button>
+            </form>
+            <div class="search-tabs" role="tablist" aria-label="Search type">
+              <button class="is-active" type="button" role="tab" aria-selected="true" data-search-type="users">People</button>
+              <button type="button" role="tab" aria-selected="false" data-search-type="posts">Posts</button>
+            </div>
+            <form class="search-filters" id="post-filters" hidden>
+              <label class="field"><span>Author</span><input name="author" maxlength="150" placeholder="Any author"></label>
+              <label class="field"><span>Date range</span><select name="date-range"><option value="">Any time</option><option value="week">This week</option><option value="month">This month</option><option value="custom">Custom range</option></select></label>
+              <label class="field"><span>From</span><input type="date" name="from"></label>
+              <label class="field"><span>To</span><input type="date" name="to"></label>
+            </form>
+            <div class="search-results" id="search-results"><div class="loading-state"><span class="spinner" aria-hidden="true"></span>Loading people…</div></div>
+            <div class="pagination" id="search-pagination"></div>
+          </section>
+        </main>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+    </div>
+  </body>
+</html>
