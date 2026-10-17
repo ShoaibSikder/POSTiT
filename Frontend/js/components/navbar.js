@@ -89,7 +89,17 @@ export function renderNavigation() {
       <div class="topbar-actions">
         ${themeButton()}
         <a class="icon-button topbar-notification" href="../pages/notifications.html" aria-label="Notifications"><span class="notification-icon">${icon("bell")}</span><span class="notification-count" data-unread-badge hidden></span></a>
-        ${user ? `<a class="topbar-user" href="../pages/profile.html">${avatarMarkup(user, "avatar-small")}<span class="topbar-user-name">${escapeHtml(displayName(user))}</span></a>` : `<a class="button button-primary topbar-login" href="../pages/login.html">Log in</a>`}
+        ${user ? `
+        <div class="topbar-profile-menu">
+          <button class="topbar-user" type="button" data-profile-menu-toggle aria-expanded="false" aria-controls="topbar-profile-dropdown" aria-label="Account options">
+            ${avatarMarkup(user, "avatar-small")}
+            <span class="topbar-user-name">${escapeHtml(displayName(user))}</span>
+          </button>
+          <div class="profile-dropdown" id="topbar-profile-dropdown" hidden>
+            <a href="../pages/profile.html">${icon("user")}<span>Profile</span></a>
+            <button type="button" data-signout>${icon("logout")}<span>Sign out</span></button>
+          </div>
+        </div>` : `<a class="button button-primary topbar-login" href="../pages/login.html">Log in</a>`}
       </div>`;
     const input = topbar.querySelector('input[name="q"]');
     if (input) {
@@ -104,7 +114,20 @@ export function renderNavigation() {
     mobile.innerHTML = authPage ? "" : navLinks.map((item) => navItem(item, current, true)).join("");
   }
 
+  const profileMenu = topbar?.querySelector(".profile-dropdown");
+  const profileMenuToggle = topbar?.querySelector("[data-profile-menu-toggle]");
   document.addEventListener("click", async (event) => {
+    const toggle = event.target.closest("[data-profile-menu-toggle]");
+    if (toggle && profileMenu) {
+      profileMenu.hidden = !profileMenu.hidden;
+      toggle.setAttribute("aria-expanded", String(!profileMenu.hidden));
+      return;
+    }
+    if (profileMenu && !profileMenu.hidden && !profileMenu.contains(event.target)) {
+      profileMenu.hidden = true;
+      profileMenuToggle?.setAttribute("aria-expanded", "false");
+    }
+
     const unavailable = event.target.closest("[data-unavailable]");
     if (unavailable) {
       showToast(`${unavailable.dataset.unavailable} are not available yet.`, "info");
@@ -118,6 +141,13 @@ export function renderNavigation() {
       } catch (error) {
         showToast(error.message || "Could not sign out. Try again.", "error");
       }
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && profileMenu && !profileMenu.hidden) {
+      profileMenu.hidden = true;
+      profileMenuToggle?.setAttribute("aria-expanded", "false");
+      profileMenuToggle?.focus();
     }
   });
 }
