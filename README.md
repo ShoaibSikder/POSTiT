@@ -57,7 +57,7 @@ Application screenshots are stored in [`Frontend/assets/images`](Frontend/assets
 
 <div>
   <a href="Frontend/assets/images/admin.png">
-    <img src="Frontend/assets/images/admin.png" width="640" alt="POSTiT administrator dashboard" />
+    <img src="Frontend/assets/images/admin.png" width="420" alt="POSTiT administrator dashboard" />
   </a>
 </div>
 
