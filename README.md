@@ -34,8 +34,8 @@ Application screenshots are stored in [`Frontend/assets/images`](Frontend/assets
   <a href="Frontend/assets/images/login.png">
     <img src="Frontend/assets/images/login.png" width="420" alt="POSTiT sign-in page" />
   </a>
-  <a href="Frontend/assets/images/Register.png">
-    <img src="Frontend/assets/images/Register.png" width="420" alt="POSTiT account registration page" />
+  <a href="Frontend/assets/images/registration.png">
+    <img src="Frontend/assets/images/registration.png" width="420" alt="POSTiT registration page" />
   </a>
 </div>
 
@@ -45,8 +45,8 @@ Application screenshots are stored in [`Frontend/assets/images`](Frontend/assets
   <a href="Frontend/assets/images/home.png">
     <img src="Frontend/assets/images/home.png" width="420" alt="POSTiT member home and feed" />
   </a>
-  <a href="Frontend/assets/images/search.png">
-    <img src="Frontend/assets/images/search.png" width="420" alt="POSTiT people and post search" />
+  <a href="Frontend/assets/images/profile.png">
+    <img src="Frontend/assets/images/profile.png" width="420" alt="POSTiT member profile page" />
   </a>
   <a href="Frontend/assets/images/notification.png">
     <img src="Frontend/assets/images/notification.png" width="420" alt="POSTiT notifications page" />
@@ -56,8 +56,8 @@ Application screenshots are stored in [`Frontend/assets/images`](Frontend/assets
 ### Administration
 
 <div>
-  <a href="Frontend/assets/images/Admin.png">
-    <img src="Frontend/assets/images/Admin.png" width="640" alt="POSTiT administrator dashboard" />
+  <a href="Frontend/assets/images/admin.png">
+    <img src="Frontend/assets/images/admin.png" width="640" alt="POSTiT administrator dashboard" />
   </a>
 </div>
 
