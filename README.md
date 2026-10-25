@@ -387,3 +387,7 @@ The frontend is plain HTML, CSS, and JavaScript and does not have a separate pac
 - Uploaded media is stored under `Backend/media/` during local development. Production media storage and delivery must be configured separately.
 - The API is the source of truth for users, posts, profile metrics, comments, follows, and notifications. Do not add reference/demo records to the frontend.
 - Database migrations are source controlled; apply them with `migrate` rather than generating migrations as a deployment step.
+
+---
+
+Created by [@shoaibsikder](https://shoaibsikderportfolio.vercel.app) to bring people together through posts, conversations, and shared communities.
